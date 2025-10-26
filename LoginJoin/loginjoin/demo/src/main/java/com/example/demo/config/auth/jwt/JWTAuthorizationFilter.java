@@ -74,49 +74,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 }
             }catch(Exception e){
 //                --------------------------------------------
-//                 1 REFRESH_TOKEN이 DB에 저장되어있을 때
-//                --------------------------------------------
-//                //1-2) access-token==만료 o ? refresh-token 만료 여부확인
-//                System.out.println("ExpiredJwtException ...AccessToken Expired.."  + e.getMessage());
-//                //2) RefreshToken의 만료유무
-//                JwtToken entity = jwtTokenRepository.findByAccessToken(token);
-//                if(entity!=null){
-//
-//                    try {
-//                        if (jwtTokenProvider.validateToken(entity.getRefreshToken())) {
-//                            //2-1) RefreshToken!=만료 ? -> AccessToken 재발급 -> 쿠키전달 + DB Token Info 갱신
-//                            //AccessToken 재발급
-//                            long now = (new Date()).getTime();  //현재시간
-//                            String accessToken = Jwts.builder()
-//                                    .setSubject(entity.getUsername()) //본문 TITLE
-//                                    .setExpiration(new Date(now + JWTProperties.ACCESS_TOKEN_EXPIRATION_TIME )) //만료날짜(밀리초단위)
-//                                    .signWith(jwtTokenProvider.getKey(), SignatureAlgorithm.HS256) // 서명값
-//                                    .claim("username",entity.getUsername()) // 본문 내용
-//                                    .claim("auth",entity.getAuth()) // 본문 내용 "ROLE_USER,USER_ADMIN"
-//                                    .compact();
-//                            //쿠키로 전달
-//                            Cookie cookie = new Cookie(JWTProperties.ACCESS_TOKEN_COOKIE_NAME,accessToken);
-//                            cookie.setMaxAge(JWTProperties.ACCESS_TOKEN_EXPIRATION_TIME);    //accesstoken 유지시간
-//                            cookie.setPath("/");    //쿠키 적용경로(/ : 모든경로)
-//                            response.addCookie(cookie); //응답정보에 쿠키 포함
-//                            //DB's AccessToken 값 갱신
-//                            entity.setAccessToken(accessToken);
-//                            jwtTokenRepository.save(entity);
-//                        }
-//                    }catch(ExpiredJwtException e2){
-//                        //2-2) RefreshToken==만료 ? -> DB's Token Info 삭제
-//                        System.out.println("ExpiredJwtException ...RefreshToken Expired.."  + e2.getMessage());
-//                        // access-token 제거(자동제거는 됨)
-//                        Cookie cookie = new Cookie(JWTProperties.ACCESS_TOKEN_COOKIE_NAME,null);
-//                        cookie.setMaxAge(0);
-//                        response.addCookie(cookie);
-//                        //;
-//                        jwtTokenRepository.deleteById(entity.getId());
-//                    }
-//                    catch (Exception e2){}
-//               }
-
-//                --------------------------------------------
 //                2 REFRESH_TOKEN이 REDIS에 저장되어있을 때
 //                --------------------------------------------
                 //1-2) access-token==만료 o ? refresh-token 만료 여부확인

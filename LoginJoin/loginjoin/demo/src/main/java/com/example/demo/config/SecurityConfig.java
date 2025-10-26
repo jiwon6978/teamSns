@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import com.example.demo.config.auth.PrincipalDetailsOAuth2Service;
 import com.example.demo.config.auth.exceptionHandler.CustomAccessDeniedHandler;
 import com.example.demo.config.auth.exceptionHandler.CustomAuthenticationEntryPoint;
 import com.example.demo.config.auth.jwt.JWTAuthorizationFilter;
@@ -21,22 +22,38 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig  {
+   private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
+   private final CustomAccessDeniedHandler customAccessDeniedHandler;
+   private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+   private final CustomFailureHandler customFailureHandler;
+   private final CustomSuccessHandler customSuccessHandler;
+   private final CustomLogoutHandler customLogoutHandler;
+   private final JWTAuthorizationFilter jwtAuthorizationFilter;
+   private final PrincipalDetailsOAuth2Service principalDetailsOAuth2Service;
+   private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    CustomLogoutSuccessHandler customLogoutSuccessHandler;
-    @Autowired
-    CustomAccessDeniedHandler customAccessDeniedHandler;
-    @Autowired
-    CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-    @Autowired
-    CustomFailureHandler customFailureHandler;
-    @Autowired
-    CustomSuccessHandler customSuccessHandler;
-    @Autowired
-    CustomLogoutHandler customLogoutHandler;
 
-    @Autowired
-    JWTAuthorizationFilter jwtAuthorizationFilter;
+    public SecurityConfig(CustomAccessDeniedHandler customAccessDeniedHandler,
+                          CustomLogoutSuccessHandler customLogoutSuccessHandler,
+                          CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
+                          CustomFailureHandler customFailureHandler,
+                          CustomSuccessHandler customSuccessHandler,
+                          CustomLogoutHandler customLogoutHandler,
+                          JWTAuthorizationFilter jwtAuthorizationFilter,
+                          PrincipalDetailsOAuth2Service principalDetailsOAuth2Service,
+                          PasswordEncoder passwordEncoder
+    )
+    {
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
+        this.customLogoutSuccessHandler = customLogoutSuccessHandler;
+        this.customAuthenticationEntryPoint =customAuthenticationEntryPoint;
+        this.customFailureHandler =customFailureHandler;
+        this.customSuccessHandler=customSuccessHandler;
+        this.customLogoutHandler=customLogoutHandler;
+        this.jwtAuthorizationFilter=jwtAuthorizationFilter;
+        this.principalDetailsOAuth2Service=principalDetailsOAuth2Service;
+        this.passwordEncoder=passwordEncoder;
+    }
 
 
     @Bean
@@ -49,7 +66,15 @@ public class SecurityConfig  {
         //권한처리
         http.authorizeHttpRequests((auth)->{
 
-            auth.requestMatchers("/","/join","/login").permitAll();
+            auth.requestMatchers(
+                    "/login",
+                    "/join",
+                    "/oauth2/**",
+                    "/login/oauth2/code/**",
+                    // 네이버 전용 콜백 경로
+                    "/oauth2/authorization/naver",
+                    "/login/oauth2/code/naver"
+            ).permitAll();
 
             auth.requestMatchers("/user").hasAnyRole("USER"); //
             auth.requestMatchers("/manager").hasAnyRole("MANAGER"); //
@@ -66,6 +91,14 @@ public class SecurityConfig  {
             login.successHandler(customSuccessHandler);     //로그인 성공시 동작하는 핸들러
             login.failureHandler(customFailureHandler);     //로그인 실패시(ID 미존재 , PW 불일치)
         });
+
+        // OAuth 로그인 설정
+        http.oauth2Login((oauth2) -> oauth2
+                .userInfoEndpoint(userInfo -> userInfo
+                        .userService(principalDetailsOAuth2Service) //
+                )
+                .successHandler(customSuccessHandler)
+        );
 
         //로그아웃(설정시 POST처리)
         http.logout( (logout)->{
@@ -116,12 +149,6 @@ public class SecurityConfig  {
 //
 //        return new InMemoryUserDetailsManager(user, manager, admin);
 //    }
-
-    // 패스워드 암호화작업(해시값생성)에 사용되는 Bean
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
 
 }
 

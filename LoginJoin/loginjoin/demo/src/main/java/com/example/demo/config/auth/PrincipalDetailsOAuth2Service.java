@@ -105,18 +105,23 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService
         // 기존 계정 존재 여부에 따라 DB저장
         Optional<User> userOptional = userRepository.findByUserName(username);
         UserDto dto = null;
+        // UNIQUE 제약 조건을 만족시키는 고유한 임시 전화번호 생성
+        String uniquePhoneNumber =
+                oAuth2UserInfo.getProvider() + "_" + oAuth2UserInfo.getProviderId();
         if(userOptional.isEmpty()){
             User user = new User();
             user.setUserName(username);
             user.setPassWord(password);
             user.setRole("ROLE_USER");
+            user.setPhoneNumber(uniquePhoneNumber);
+            user.setEmail(oAuth2UserInfo.getEmail());
             userRepository.save(user);
 
-            dto = new UserDto(username,password,"ROLE_USER");
+            dto = new UserDto(user.getEmail(),user.getPhoneNumber(), username,password,"ROLE_USER");
 
         }else{
             User user = userOptional.get();
-            dto = new UserDto(username,user.getPassWord(),user.getRole());
+            dto = new UserDto(username,user.getPassWord(),user.getRole(),user.getPhoneNumber(),user.getEmail());
         }
         // PrincipalDetails 로 변환해서 반환
         dto.setProvider(provider);

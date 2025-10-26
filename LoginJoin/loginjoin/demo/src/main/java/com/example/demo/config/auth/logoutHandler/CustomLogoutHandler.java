@@ -6,7 +6,9 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.stereotype.Component;
 
+@Component
 @Slf4j
 public class CustomLogoutHandler implements LogoutHandler {
 
@@ -15,9 +17,9 @@ public class CustomLogoutHandler implements LogoutHandler {
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         log.info("CustomLogoutHandler's logout invoke..!");
         //세션기반(기본값)
-        HttpSession session =request.getSession(false);
-        if(session!=null)
-            session.invalidate();
+//        HttpSession session =request.getSession(false);
+//        if(session!=null)
+//            session.invalidate();
 
         //Token방식 -
 

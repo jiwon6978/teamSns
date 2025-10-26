@@ -10,7 +10,7 @@ description = 'Demo project for Spring Boot'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(24)
     }
 }
 
@@ -67,8 +67,10 @@ dependencies {
     //JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    //JSTL
-    implementation 'org.apache.taglibs:taglibs-standard-jakarta:1.2.7'
+    // JSTL API (자카르타 네임스페이스)
+    implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:1.2.7'
+    // JSTL 구현체 (주로 GlassFish 구현체를 사용함)
+    runtimeOnly 'org.glassfish.web:jakarta.servlet.jsp.jstl:1.2.6'
 
     //REDIS
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
