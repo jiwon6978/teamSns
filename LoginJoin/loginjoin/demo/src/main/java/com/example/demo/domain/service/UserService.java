@@ -1,13 +1,10 @@
-package com.example.demo.domain.user.service;
+package com.example.demo.domain.service;
 
-
-import com.example.demo.domain.user.dtos.JoinDto;
-import com.example.demo.domain.user.dtos.LoginDto;
-import com.example.demo.domain.user.dtos.ProfileUpdateDto;
-import com.example.demo.domain.user.entity.User;
-import com.example.demo.domain.user.repository.UserRepository;
+import com.example.demo.domain.dto.JoinDto;
+import com.example.demo.domain.dto.ProfileUpdateDto;
+import com.example.demo.domain.entity.User;
+import com.example.demo.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

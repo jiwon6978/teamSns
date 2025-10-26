@@ -1,18 +1,16 @@
 package com.example.demo.config.auth;
 
-
-import com.example.demo.domain.user.dtos.UserDto;
-import com.example.demo.domain.user.entity.User;
+import com.example.demo.domain.dto.UserDto;
+import com.example.demo.domain.entity.User;
+import com.example.demo.domain.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -21,17 +19,17 @@ import java.util.Optional;
 public class PrincipalDetailsService implements UserDetailsService {
 
     @Autowired
-    private com.example.demo.domain.user.repository.UserRepository userRepository;
+    private UserRepository userRepository;
 
 
     @Override
-    public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
-        System.out.println("PrincipalDetailsService's loadUserByUsername : " + phoneNumber);
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        System.out.println("PrincipalDetailsService's loadUserByUsername : " + userName);
 
         Optional<User> userOptional =
-            userRepository.findByPhoneNumber(phoneNumber);
+                userRepository.findByUserName(userName);
         if(userOptional.isEmpty())
-            throw new UsernameNotFoundException(phoneNumber+" 계정이 존재하지 않습니다");
+            throw new UsernameNotFoundException(userName+" 계정이 존재하지 않습니다");
 
         //ENTITY -> DTO
         User user = userOptional.get();

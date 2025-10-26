@@ -75,6 +75,4 @@ public class UserController {
         session.setAttribute("loginUser", LoginUserView.from(user));
         return "redirect:/sns/main";
     }
-
-
 }
