@@ -27,8 +27,9 @@ public class UserService {
                 .id(null)
                 .email(dto.getEmail())
                 .userName(dto.getUserName())
-                .passWord(dto.getPassWord())
+                .passWord(encodedPassword)
                 .phoneNumber(dto.getPhoneNumber())
+                .role("ROLE_USER")
                 .build();
         userRepository.save(user);
         return user.getId();

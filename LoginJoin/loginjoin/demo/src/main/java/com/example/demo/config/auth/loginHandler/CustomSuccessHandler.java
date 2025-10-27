@@ -44,8 +44,9 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         cookie.setMaxAge(JWTProperties.ACCESS_TOKEN_EXPIRATION_TIME);    //accesstoken 유지시간
         cookie.setPath("/");    //쿠키 적용경로(/ : 모든경로)
         response.addCookie(cookie); //응답정보에 쿠키 포함
+        log.info("CustomSuccessHandler's onAuthenticationSuccess invoke...");
 
-        //TOKEN 을 DB로 저장
+       // TOKEN 을 DB로 저장
 //        PrincipalDetails principalDetails = (PrincipalDetails)authentication.getPrincipal();
 //        String auth = principalDetails.getDto().getRole();
 //        JwtToken tokenEntity = JwtToken.builder()
@@ -69,26 +70,26 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
         //Role 별로 redirect 경로 수정
         String redirectUrl = "/";
-//        for(GrantedAuthority authority : authentication.getAuthorities())
-//        {
-//            log.info("authority : " + authority);
-//            String role = authority.getAuthority(); //String
-//
-//            if(role.contains("ROLE_ADMIN")){
-//                // /admin 리다이렉트
-//                redirectUrl = "/admin";
-//                break;
-//            }else if(role.contains("ROLE_MANAGER")){
-//                // /manager 리다이렉트
-//                redirectUrl = "/manager";
-//                break;
-//            }else{
-//                // /user 리다이렉트
-//                redirectUrl = "/user";
-//                break;
-//            }
-//
-//        }
+        for(GrantedAuthority authority : authentication.getAuthorities())
+        {
+            log.info("authority : " + authority);
+            String role = authority.getAuthority(); //String
+
+            if(role.contains("ROLE_ADMIN")){
+                // /admin 리다이렉트
+                redirectUrl = "/admin";
+                break;
+            }else if(role.contains("ROLE_MANAGER")){
+                // /manager 리다이렉트
+                redirectUrl = "/manager";
+                break;
+            }else{
+                // /user 리다이렉트
+                redirectUrl = "/user";
+                break;
+            }
+
+        }
         response.sendRedirect(redirectUrl);
 
     }

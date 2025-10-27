@@ -1,4 +1,4 @@
-package com.example.demo.config.auth; // 패키지 경로는 프로젝트 구조에 맞게 수정해주세요.
+package com.example.demo.config.auth;
 
 import com.example.demo.domain.dto.UserDto;
 import lombok.Data;
@@ -14,9 +14,11 @@ import java.util.Map;
 
 @Data
 public class PrincipalDetails implements UserDetails, OAuth2User {
-    private final UserDto dto;
 
-    private Map<String, Object> attributes;
+    private UserDto dto;
+
+    //OAUTH 속성
+    Map<String, Object> attributes;
 
     public PrincipalDetails(UserDto dto) {
         this.dto = dto;
@@ -33,8 +35,8 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
         if (dto.getRole() == null || dto.getRole().isEmpty()) {
             return Collections.emptyList();
         }
-
         Collection<GrantedAuthority> authorities = new ArrayList<>();
+
         String roles [] = dto.getRole().split(",");
         for(String role : roles){
             authorities.add(new SimpleGrantedAuthority(role.trim()));
@@ -48,8 +50,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     public String getPassword() {
         return dto.getPassWord();
     }
-
-    //식별할 ID값
     @Override
     public String getUsername() {
         return dto.getUserName();

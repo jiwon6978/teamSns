@@ -63,6 +63,9 @@ public class JWTTokenProvider {
                 .map((role)->{return role.getAuthority();}) // 각각 GrantedAuthoriy("ROLE~")들을 문자열값으로 반환해서 map처리
                 .collect(Collectors.joining(",")); //각각의 role(ROLE_ADMIN ROLE_USER...) 를 ','를 기준으로 묶음 ("ROLE_USER,ROLE_ADMIN")
         //AccessToken(서버의 서비스를 이용제한 )
+        System.out.println("토큰발급 : "+authentication);
+        System.out.println("토큰발급 : "+authorities);
+
         long now = (new Date()).getTime();  //현재시간
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName()) //본문 TITLE

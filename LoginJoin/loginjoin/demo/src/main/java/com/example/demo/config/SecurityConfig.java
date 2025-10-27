@@ -6,6 +6,7 @@ import com.example.demo.config.auth.exceptionHandler.CustomAuthenticationEntryPo
 import com.example.demo.config.auth.jwt.JWTAuthorizationFilter;
 import com.example.demo.config.auth.loginHandler.CustomFailureHandler;
 import com.example.demo.config.auth.loginHandler.CustomSuccessHandler;
+import com.example.demo.config.auth.loginHandler.OAuth2LoginSuccessHandler;
 import com.example.demo.config.auth.logoutHandler.CustomLogoutHandler;
 import com.example.demo.config.auth.logoutHandler.CustomLogoutSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,39 +23,23 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig  {
-   private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
-   private final CustomAccessDeniedHandler customAccessDeniedHandler;
-   private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-   private final CustomFailureHandler customFailureHandler;
-   private final CustomSuccessHandler customSuccessHandler;
-   private final CustomLogoutHandler customLogoutHandler;
-   private final JWTAuthorizationFilter jwtAuthorizationFilter;
-   private final PrincipalDetailsOAuth2Service principalDetailsOAuth2Service;
-   private final PasswordEncoder passwordEncoder;
+    @Autowired
+    CustomLogoutSuccessHandler customLogoutSuccessHandler;
+    @Autowired
+    CustomAccessDeniedHandler customAccessDeniedHandler;
+    @Autowired
+    CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    @Autowired
+    CustomFailureHandler customFailureHandler;
+    @Autowired
+    CustomSuccessHandler customSuccessHandler;
+    @Autowired
+    CustomLogoutHandler customLogoutHandler;
+    @Autowired
+    JWTAuthorizationFilter jwtAuthorizationFilter;
 
-
-    public SecurityConfig(CustomAccessDeniedHandler customAccessDeniedHandler,
-                          CustomLogoutSuccessHandler customLogoutSuccessHandler,
-                          CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
-                          CustomFailureHandler customFailureHandler,
-                          CustomSuccessHandler customSuccessHandler,
-                          CustomLogoutHandler customLogoutHandler,
-                          JWTAuthorizationFilter jwtAuthorizationFilter,
-                          PrincipalDetailsOAuth2Service principalDetailsOAuth2Service,
-                          PasswordEncoder passwordEncoder
-    )
-    {
-        this.customAccessDeniedHandler = customAccessDeniedHandler;
-        this.customLogoutSuccessHandler = customLogoutSuccessHandler;
-        this.customAuthenticationEntryPoint =customAuthenticationEntryPoint;
-        this.customFailureHandler =customFailureHandler;
-        this.customSuccessHandler=customSuccessHandler;
-        this.customLogoutHandler=customLogoutHandler;
-        this.jwtAuthorizationFilter=jwtAuthorizationFilter;
-        this.principalDetailsOAuth2Service=principalDetailsOAuth2Service;
-        this.passwordEncoder=passwordEncoder;
-    }
-
+    @Autowired
+    OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
@@ -84,21 +69,13 @@ public class SecurityConfig  {
 
         });
 
-        //로그인
+        //로컬로그인
         http.formLogin( (login)->{
             login.permitAll();
             login.loginPage("/login");
             login.successHandler(customSuccessHandler);     //로그인 성공시 동작하는 핸들러
             login.failureHandler(customFailureHandler);     //로그인 실패시(ID 미존재 , PW 불일치)
         });
-
-        // OAuth 로그인 설정
-        http.oauth2Login((oauth2) -> oauth2
-                .userInfoEndpoint(userInfo -> userInfo
-                        .userService(principalDetailsOAuth2Service) //
-                )
-                .successHandler(customSuccessHandler)
-        );
 
         //로그아웃(설정시 POST처리)
         http.logout( (logout)->{
@@ -116,6 +93,7 @@ public class SecurityConfig  {
         //Oauth2-Client 활성화
         http.oauth2Login((oauth2)->{
             oauth2.loginPage("/login");
+            oauth2.successHandler(oAuth2LoginSuccessHandler);
         });
 
         //SESSION 비활성화

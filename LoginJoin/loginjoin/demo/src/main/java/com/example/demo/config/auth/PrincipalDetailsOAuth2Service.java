@@ -76,6 +76,7 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService
             //DB 등록예정 계정명
             username=oAuth2UserInfo.getProvider() +"_"+ oAuth2UserInfo.getProviderId();
 
+
         }
         else if(provider.startsWith("Naver"))
         {
@@ -126,6 +127,13 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService
         // PrincipalDetails 로 변환해서 반환
         dto.setProvider(provider);
         dto.setProviderId(oAuth2UserInfo.getProviderId());
-        return new PrincipalDetails(dto,oAuth2UserInfo.getAttributes()); // dto , attributes 전달
+
+        PrincipalDetails principalDetails = new PrincipalDetails(dto,oAuth2UserInfo.getAttributes());
+
+        // 💡 추가된 출력 코드
+        System.out.println("⭐ FINAL PrincipalDetails: " + principalDetails);
+
+        return principalDetails;// dto , attributes 전달
+
     }
 }
